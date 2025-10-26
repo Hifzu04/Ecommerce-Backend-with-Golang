@@ -2,15 +2,15 @@ package database
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/joho/godotenv"
+
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"go.mongodb.org/mongo-driver/v2/mongo"
 )
 
 func Connectdb() *mongo.Client {
@@ -23,18 +23,20 @@ func Connectdb() *mongo.Client {
 	//CONNECT TO DB
 	clientOptions := options.Client().ApplyURI(MONGO_URI)
 
-	client, err := mongo.Connect(context.Background(), clientOptions)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	client, err := mongo.Connect(ctx, clientOptions)
 
 	if err != nil {
 		log.Fatal(err)
 	}
-	
 
 	// Check the connection.
-	err = client.Ping(context.Background(), nil)
+	err = client.Ping(ctx, nil)
 
 	if err != nil {
-		log.Fatalf(err)
+		log.Fatalf("Error pinging mongodb %v", err)
 	} else {
 		fmt.Println("Connected to mongodb!!")
 	}
@@ -45,11 +47,11 @@ func Connectdb() *mongo.Client {
 var Client *mongo.Client = Connectdb()
 
 func UserData(client *mongo.Client, CollectionName string) *mongo.Collection {
-    var collection *mongo.Collection = client.Database("Ecommerce").Collection(CollectionName)
+	var collection *mongo.Collection = client.Database("Ecommerce").Collection(CollectionName)
 	return collection
 }
 
-func ProductData(client *mongo.client , CollectionName string  ) *mongo.Collection {
-       var productCollection  *mongo.Collection = client.Database("Ecommerce").Collection(CollectionName)
-	   return productCollection
-} 
+func ProductData(client *mongo.Client, CollectionName string) *mongo.Collection {
+	var productCollection *mongo.Collection = client.Database("Ecommerce").Collection(CollectionName)
+	return productCollection
+}

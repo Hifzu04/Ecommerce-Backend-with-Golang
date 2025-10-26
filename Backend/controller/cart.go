@@ -10,9 +10,9 @@ import (
 	"github.com/Hifzu04/Ecommerce/Backend/database"
 	"github.com/Hifzu04/Ecommerce/Backend/models"
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/v2/bson"
-	"go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type Application struct {
@@ -53,7 +53,7 @@ func (app *Application) AddToCart() gin.HandlerFunc {
 
 		defer cancel()
 
-		err = database.addProductToCart(ctx, app.prodcollection, app.usercollection, productId, userQueryID)
+		err = database.AddProductToCart(ctx, app.prodcollection, app.usercollection, productId, userQueryID)
 
 		if err != nil {
 			c.IndentedJSON(http.StatusInternalServerError, err)
@@ -154,7 +154,9 @@ func GetItemFromCart() gin.HandlerFunc {
 			log.Println(err)
 		}
 
-		// Declares a variable listing as a slice of bson.M.
+		// Declares
+		//err = database.addProductToCart(ctx, app.prodcollection, app.usercollection, productId, userQueryID)
+		// a variable listing as a slice of bson.M.
 		// bson.M is just a map[string]interface{}, i.e., a flexible JSON-like structure in Go.
 		var listing []bson.M
 		//pointcursor.All(...) reads all documents from the cursor into the listing slice.
@@ -179,10 +181,9 @@ func (app *Application) BuyFromCart() gin.HandlerFunc {
 		userQueryID := c.Query("id")
 
 		if userQueryID == "" {
-			log.Panicln("user id is empty ")
-			_ = c.AbortWithError(http.StatusBadRequest, errors.New("userid is empty"))
+			log.Panicln("user id is empty")
+			_ = c.AbortWithError(http.StatusBadRequest, errors.New("UserID is empty"))
 		}
-
 		var context, cancel = context.WithTimeout(context.Background(), 4*time.Second)
 		defer cancel()
 
@@ -210,9 +211,7 @@ func (app *Application) InstantBuy() gin.HandlerFunc {
 			log.Println("Product id is empty")
 			_ = c.AbortWithError(http.StatusInternalServerError, errors.New("Product id is empty"))
 		}
-
 		productID, err := primitive.ObjectIDFromHex(productQueryid)
-
 		if err != nil {
 			log.Println(err)
 			c.AbortWithStatus(http.StatusInternalServerError)

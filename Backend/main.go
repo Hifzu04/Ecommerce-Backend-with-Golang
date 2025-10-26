@@ -4,28 +4,33 @@ import (
 	"log"
 	"os"
 
+	"github.com/Hifzu04/Ecommerce/Backend/controller"
+	"github.com/Hifzu04/Ecommerce/Backend/database"
+	"github.com/Hifzu04/Ecommerce/Backend/middleware"
 	"github.com/Hifzu04/Ecommerce/Backend/routes"
 	"github.com/gin-gonic/gin"
-	"honnef.co/go/tools/config"
 )
 
-
-func main(){
-	port:=os.Getenv("PORT")
-	if port == ""{
-		port= "8000"
+func main() {
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8000"
 	}
+	///app := controller.NewApplication(database.ProductData(database.Client, "Products"), database.UserData(database.Client, "Users"))
+	var app = controller.NewApplication(database.ProductData(database.Client, "Products"), database.UserData(database.Client, "Users"))
 
-	config.ConnectDB()
 	router := gin.New()
-
 	router.Use(gin.Logger())
-	
-
 	routes.UserRoutes(router)
-
-	
-	log.Fatal(router.Run(":" +port))	
-
-
+	router.Use(middleware.Authentication())
+	router.GET("/addtocart", app.AddToCart())
+	router.GET("/removeitem", app.RemoveItem())
+	router.GET("/listcart", controller.GetItemFromCart())
+	router.POST("/addaddress", controller.AddAddress())
+	router.PUT("/edithomeaddress", controller.EditHomeAddress())
+	router.PUT("/editworkaddress", controller.EditWorkAddress())
+	router.GET("/deleteaddresses", controller.DeleteAddress())
+	router.GET("/cartcheckout", app.BuyFromCart())
+	router.GET("/instantbuy", app.InstantBuy())
+	log.Fatal(router.Run(":" + port))
 }

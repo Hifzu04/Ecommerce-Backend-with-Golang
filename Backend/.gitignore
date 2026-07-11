@@ -1,1 +1,15 @@
+# Environment variables
 .env
+
+# Go binary
+ecommerce-server
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db

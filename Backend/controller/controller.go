@@ -232,7 +232,7 @@ func SearchProductbyQuery() gin.HandlerFunc {
 
 		if err != nil {
 			c.IndentedJSON(404, "Something went wrong in fetching the db")
-			fmt.Println("error during searching from db %v", err)
+			fmt.Printf("error during searching from db %v\n", err)
 		}
 
 		err = SearchqueryDB.All(ctx, &SearchedPoducts)

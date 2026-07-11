@@ -1,0 +1,37 @@
+
+services:
+  # ── MongoDB ───────────────────────────────────
+  mongodb:
+    image: mongo:7.0
+    container_name: ecommerce-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - ecommerce-net
+
+  # ── Backend API ───────────────────────────────
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ecommerce-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=8000
+      - MONGO_URI=mongodb://mongodb:27017
+      - GIN_MODE=release
+    depends_on:
+      - mongodb
+    restart: unless-stopped
+    networks:
+      - ecommerce-net
+
+volumes:
+  mongo-data:
+
+networks:
+  ecommerce-net:
+    driver: bridge

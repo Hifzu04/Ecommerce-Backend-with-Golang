@@ -14,11 +14,17 @@ import (
 )
 
 func Connectdb() *mongo.Client {
-	err := godotenv.Load(".env")
-	if err != nil {
-		log.Fatalf("Error loading env file: %s", err)
+	// Try loading .env from current or parent directories.
+	// Non-fatal: env vars may already be set (Docker, CI, tests).
+	for _, path := range []string{".env", "../.env", "../../.env"} {
+		if err := godotenv.Load(path); err == nil {
+			break
+		}
 	}
 	MONGO_URI := os.Getenv("MONGO_URI")
+	if MONGO_URI == "" {
+		log.Fatal("MONGO_URI environment variable is not set")
+	}
 
 	//CONNECT TO DB
 	clientOptions := options.Client().ApplyURI(MONGO_URI)

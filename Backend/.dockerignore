@@ -1,0 +1,22 @@
+# Version control
+.git
+.gitignore
+
+# IDE / editor
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Documentation
+*.md
+LICENSE
+
+# Docker files (avoid recursive builds)
+Dockerfile
+docker-compose.yaml
+.dockerignore

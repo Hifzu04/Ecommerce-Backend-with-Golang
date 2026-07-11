@@ -48,7 +48,25 @@ func VerifyPassword(password string, hashpassword string) (bool, string) {
 	return valid, msg
 
 }
+// UserSignup is used only for swagger documentation
+type UserSignup struct {
+	First_Name string `json:"first_name" example:"alex"`
+	Last_Name  string `json:"last_name" example:"carry"`
+	Email      string `json:"email" example:"alex@example.com"`
+	Password   string `json:"password" example:"123456"`
+	Phone      string `json:"phone" example:"+4534545435"`
+}
 
+// Signup godoc
+// @Summary      Register a new user
+// @Description  Creates a new user account with email, password, and phone
+// @Tags         Authentication
+// @Accept       json
+// @Produce      json
+// @Param        user  body  UserSignup  true  "User signup details"
+// @Success      201  {string}  string  "Successfully signed up"
+// @Failure      400  {object}  map[string]string  "Validation error or duplicate user"
+// @Router       /users/signup [post]
 func Signup() gin.HandlerFunc {
 	return func(cont *gin.Context) {
 		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
@@ -124,7 +142,22 @@ func Signup() gin.HandlerFunc {
 		cont.JSON(http.StatusCreated, "Sucessfully signed up!!!")
 	}
 }
+// UserLogin is used only for swagger documentation
+type UserLogin struct {
+	Email    string `json:"email" example:"hifzur@example.com"`
+	Password string `json:"password" example:"SecurePass123"`
+}
 
+// Login godoc
+// @Summary      Login user
+// @Description  Authenticates user and returns JWT tokens
+// @Tags         Authentication
+// @Accept       json
+// @Produce      json
+// @Param        credentials  body  UserLogin  true  "Login credentials"
+// @Success      302  {object}  models.User  "User data with tokens"
+// @Failure      500  {object}  map[string]string  "Invalid credentials"
+// @Router       /users/login [post]
 func Login() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)

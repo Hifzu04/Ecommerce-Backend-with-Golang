@@ -1,6 +1,6 @@
 # 🛒 Ecommerce Backend API
 
-A production-ready RESTful API for an e-commerce platform built with **Go**, the **Gin** web framework, and **MongoDB**.
+A comprehensive, production-ready RESTful API for an e-commerce platform built with **Go**, the **Gin** web framework, and **MongoDB**. This project showcases modern backend engineering practices including **Docker containerization**, a full suite of **Unit & Integration tests**, **Swagger (OpenAPI) documentation**, **Role-Based Authentication**, and **API Request Logging & Monitoring**.
 
 ---
 
@@ -13,7 +13,10 @@ A production-ready RESTful API for an e-commerce platform built with **Go**, the
 | **Cart** | Add / remove items, view cart with aggregated total price |
 | **Orders** | Checkout entire cart or instant-buy a single product |
 | **Addresses** | Add up to 2 addresses per user (home / work), edit & delete |
-
+| **Documentation** | Interactive OpenAPI 3.0 specs available via **Swagger UI** |
+| **Testing** | 30+ comprehensive unit and integration tests using a dedicated test database |
+| **DevOps** | Multi-stage Docker builds and Docker Compose orchestration |
+| **Monitoring** | Built-in HTTP request logging (status codes, latency, client IP) via Gin middleware |
 ---
 
 ## 🏗️ Tech Stack
@@ -109,6 +112,15 @@ Connected to mongodb!!
 ```
 
 The server is now live at **`http://localhost:8000`**.
+
+### 📖 Accessing Swagger API Documentation
+
+This project uses **Swagger** to provide interactive OpenAPI documentation.
+
+Once the server is running (either locally or via Docker), open your browser and navigate to:
+**👉 `http://localhost:8000/swagger/index.html`**
+
+You can use the Swagger UI to view all endpoints, expected payloads, and even execute real HTTP requests against the local API.
 
 **Verify it works:**
 ```bash

@@ -1,0 +1,344 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "REST API for an e-commerce platform with user auth, products, cart, orders, and addresses.",
+        "title": "Ecommerce Backend API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "host": "localhost:8000",
+    "basePath": "/",
+    "paths": {
+        "/addtocart": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Adds a product to the user's shopping cart",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Add product to cart",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Product ID",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "userID",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully added to cart",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Missing product/user ID",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/users/login": {
+            "post": {
+                "description": "Authenticates user and returns JWT tokens",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Login user",
+                "parameters": [
+                    {
+                        "description": "Login credentials",
+                        "name": "credentials",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controller.UserLogin"
+                        }
+                    }
+                ],
+                "responses": {
+                    "302": {
+                        "description": "User data with tokens",
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    },
+                    "500": {
+                        "description": "Invalid credentials",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/users/signup": {
+            "post": {
+                "description": "Creates a new user account with email, password, and phone",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Register a new user",
+                "parameters": [
+                    {
+                        "description": "User signup details",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controller.UserSignup"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Successfully signed up",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error or duplicate user",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "controller.UserLogin": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "hifzur@example.com"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "SecurePass123"
+                }
+            }
+        },
+        "controller.UserSignup": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "hifzur@example.com"
+                },
+                "first_name": {
+                    "type": "string",
+                    "example": "Hifzur"
+                },
+                "last_name": {
+                    "type": "string",
+                    "example": "Rahman"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "SecurePass123"
+                },
+                "phone": {
+                    "type": "string",
+                    "example": "+4534545435"
+                }
+            }
+        },
+        "models.Address": {
+            "type": "object",
+            "properties": {
+                "address_id": {
+                    "type": "string"
+                },
+                "city_name": {
+                    "type": "string"
+                },
+                "house_name": {
+                    "type": "string"
+                },
+                "pin_code bson:pin_code": {
+                    "type": "string"
+                },
+                "state": {
+                    "type": "string"
+                },
+                "street_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Order": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "discount": {
+                    "type": "integer"
+                },
+                "order_list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ProductUser"
+                    }
+                },
+                "ordered_on": {
+                    "type": "string"
+                },
+                "payment_method": {
+                    "$ref": "#/definitions/models.Payment"
+                },
+                "total_price": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.Payment": {
+            "type": "object",
+            "properties": {
+                "cod": {
+                    "type": "boolean"
+                },
+                "digital": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.ProductUser": {
+            "type": "object",
+            "properties": {
+                "image": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "integer"
+                },
+                "product_id": {
+                    "type": "string"
+                },
+                "product_name": {
+                    "type": "string"
+                },
+                "rating": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.User": {
+            "type": "object",
+            "required": [
+                "email",
+                "first_name",
+                "last_name",
+                "password",
+                "phone"
+            ],
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "address": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Address"
+                    }
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string",
+                    "maxLength": 30,
+                    "minLength": 2
+                },
+                "last_name": {
+                    "type": "string",
+                    "maxLength": 30,
+                    "minLength": 2
+                },
+                "orders": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Order"
+                    }
+                },
+                "password": {
+                    "type": "string",
+                    "minLength": 6
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "refresh_token": {
+                    "type": "string"
+                },
+                "token": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                },
+                "usercart": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ProductUser"
+                    }
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "token",
+            "in": "header"
+        }
+    }
+}

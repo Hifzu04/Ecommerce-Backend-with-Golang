@@ -1,0 +1,231 @@
+basePath: /
+definitions:
+  controller.UserLogin:
+    properties:
+      email:
+        example: hifzur@example.com
+        type: string
+      password:
+        example: SecurePass123
+        type: string
+    type: object
+  controller.UserSignup:
+    properties:
+      email:
+        example: hifzur@example.com
+        type: string
+      first_name:
+        example: Hifzur
+        type: string
+      last_name:
+        example: Rahman
+        type: string
+      password:
+        example: SecurePass123
+        type: string
+      phone:
+        example: "+4534545435"
+        type: string
+    type: object
+  models.Address:
+    properties:
+      address_id:
+        type: string
+      city_name:
+        type: string
+      house_name:
+        type: string
+      pin_code bson:pin_code:
+        type: string
+      state:
+        type: string
+      street_name:
+        type: string
+    type: object
+  models.Order:
+    properties:
+      _id:
+        type: string
+      discount:
+        type: integer
+      order_list:
+        items:
+          $ref: '#/definitions/models.ProductUser'
+        type: array
+      ordered_on:
+        type: string
+      payment_method:
+        $ref: '#/definitions/models.Payment'
+      total_price:
+        type: integer
+    type: object
+  models.Payment:
+    properties:
+      cod:
+        type: boolean
+      digital:
+        type: boolean
+    type: object
+  models.ProductUser:
+    properties:
+      image:
+        type: string
+      price:
+        type: integer
+      product_id:
+        type: string
+      product_name:
+        type: string
+      rating:
+        type: integer
+    type: object
+  models.User:
+    properties:
+      _id:
+        type: string
+      address:
+        items:
+          $ref: '#/definitions/models.Address'
+        type: array
+      created_at:
+        type: string
+      email:
+        type: string
+      first_name:
+        maxLength: 30
+        minLength: 2
+        type: string
+      last_name:
+        maxLength: 30
+        minLength: 2
+        type: string
+      orders:
+        items:
+          $ref: '#/definitions/models.Order'
+        type: array
+      password:
+        minLength: 6
+        type: string
+      phone:
+        type: string
+      refresh_token:
+        type: string
+      token:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: string
+      usercart:
+        items:
+          $ref: '#/definitions/models.ProductUser'
+        type: array
+    required:
+    - email
+    - first_name
+    - last_name
+    - password
+    - phone
+    type: object
+host: localhost:8000
+info:
+  contact: {}
+  description: REST API for an e-commerce platform with user auth, products, cart,
+    orders, and addresses.
+  title: Ecommerce Backend API
+  version: "1.0"
+paths:
+  /addtocart:
+    post:
+      description: Adds a product to the user's shopping cart
+      parameters:
+      - description: Product ID
+        in: query
+        name: id
+        required: true
+        type: string
+      - description: User ID
+        in: query
+        name: userID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully added to cart
+          schema:
+            type: string
+        "400":
+          description: Missing product/user ID
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Add product to cart
+      tags:
+      - Cart
+  /users/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticates user and returns JWT tokens
+      parameters:
+      - description: Login credentials
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/controller.UserLogin'
+      produces:
+      - application/json
+      responses:
+        "302":
+          description: User data with tokens
+          schema:
+            $ref: '#/definitions/models.User'
+        "500":
+          description: Invalid credentials
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Login user
+      tags:
+      - Authentication
+  /users/signup:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new user account with email, password, and phone
+      parameters:
+      - description: User signup details
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/controller.UserSignup'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Successfully signed up
+          schema:
+            type: string
+        "400":
+          description: Validation error or duplicate user
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Register a new user
+      tags:
+      - Authentication
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: token
+    type: apiKey
+swagger: "2.0"

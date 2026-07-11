@@ -26,7 +26,17 @@ func NewApplication(prodcollection, usercollection *mongo.Collection) *Applicati
 		usercollection: usercollection,
 	}
 }
-
+// AddToCart godoc
+// @Summary      Add product to cart
+// @Description  Adds a product to the user's shopping cart
+// @Tags         Cart
+// @Produce      json
+// @Param        id      query  string  true  "Product ID"
+// @Param        userID  query  string  true  "User ID"
+// @Security     ApiKeyAuth
+// @Success      200  {string}  string  "Successfully added to cart"
+// @Failure      400  {object}  map[string]string  "Missing product/user ID"
+// @Router       /addtocart [post]
 func (app *Application) AddToCart() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		productQueryId := c.Query("id")
